@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DST TopUp - Free Fire</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #111;
+      color: #fff;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    label {
+      display: block;
+      margin-top: 16px;
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 4px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background: #00b894;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 24px;
+    }
+    button:hover {
+      background: #019875;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>DST TopUp - Free Fire</h1>
+
+  <form id="topupForm">
+    <label for="uid">Free Fire UID</label>
+    <input type="text" id="uid" name="uid" placeholder="তোমার Free Fire UID লিখো" required />
+
+    <label for="number">বিকাশ/নগদ নাম্বার</label>
+    <input type="tel" id="number" name="number" placeholder="01610682716 required />
+
+    <label for="amount">প্যাকেজ সিলেক্ট করো</label>
+    <select id="amount" name="amount" required>
+      <option value="">-- প্যাকেজ নির্বাচন করো --</option>
+      <option value="24tk-25diamond">২৪৳ = ২৫ Diamond</option>
+      <option value="35tk-40diamond">৩৫৳ = ৪০ Diamond</option>
+      <option value="50tk-50diamond">৫০৳ = ৫০ Diamond</option>
+    </select>
+
+    <button type="submit">টপআপ করুন</button>
+  </form>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDrwY4EIOwe-ke2E1LXSelx5piyXfgCg4A",
+      authDomain: "dst-topup.firebaseapp.com",
+      projectId: "dst-topup",
+      storageBucket: "dst-topup.firebasestorage.app",
+      messagingSenderId: "517697035805",
+      appId: "1:517697035805:web:806feb20eac0f972f2b0f4",
+      measurementId: "G-NXH51S2023"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("topupForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const uid = document.getElementById("uid").value.trim();
+      const number = document.getElementById("number").value.trim();
+      const amount = document.getElementById("amount").value;
+
+      if (!uid || !number || !amount) {
+        alert("সব তথ্য সঠিকভাবে পূরণ করো");
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, "topupRequests"), {
+          uid,
+          number,
+          amount,
+          timestamp: new Date()
+        });
+        alert("✅ টপআপ রিকোয়েস্ট সফলভাবে পাঠানো হয়েছে!");
+        form.reset();
+      } catch (error) {
+        console.error("Error: ", error);
+        alert("টপআপ রিকোয়েস্ট পাঠাতে সমস্যা হয়েছে। আবার চেষ্টা করো।");
+      }
+    });
+  </script>
+
+</body>
+</html>
